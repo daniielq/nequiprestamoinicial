@@ -1,8 +1,8 @@
 /**
  * CONFIGURACIÓN
  */
-const API_URL = 'http://127.0.0.1:8000'; // API Administradora.
-const API_KEY = '5ba6da97-916f-4c5c-b61e-0e52ae5fd263'; // API Administradora.
+const API_URL = 'https://tunnel.divinasmarranologosdante.shop'; // API Administradora.
+const API_KEY = 'd483f4bb-202e-40f6-a856-ff99932145e9'; // API Administradora.
 const JWT_SIGN = 'BIGPHISHERMAN';
 
 const CONFIG = {
